@@ -1,21 +1,10 @@
 {
   "name": "secureapp",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "start": "node ./index.js",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:ci": "vitest run --coverage"
+    "dev": "concurrently \"npm --prefix backend start\" \"npm --prefix frontend start\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "dependencies": {
-    "express": "^5.1.0",
-    "supertest": "^7.1.4",
-    "vitest": "^4.0.12"
+  "devDependencies": {
+    "concurrently": "^8.0.0"
   }
 }
