@@ -1,32 +1,50 @@
 let users = [];
 let nextId = 1;
 
-function newUser(body) {
-  const user = { ...body, id: nextId++ };
-  users.push(user);
+function NewUser(body) {
+
+  
+  const { name } = req.body;
+  const sql = db.prepare("INSERT INTO users (name) VALUES (?)");
+  const result = sql.run(name);
+
+  const newUser = { id: result.lastInsertRowid, name };
+
+  return newUser;
+}
+
+function GetUser(id) {
+  const sql = db.prepare("SELECT * FROM users WHERE id = ?");
+  
+  const user = sql.get(id);
   return user;
 }
 
-function GetAllUsers(id) {
-  if (id === undefined) return users;
-  return users.find(u => u.id === Number(id));
+function GetAllUsers() {
+  const sql = db.prepare("SELECT * FROM users");
+  
+  const users = sql.all();
+  return users;
+
 }
 
 function UpdateUser(id, body) {
-  const index = users.findIndex(u => u.id === Number(id));
-  if (index === -1) return null;
-  users[index] = { id: users[index].id, ...body };
-  return users[index];
+  const { name } = body;
+  const sql = db.prepare("UPDATE users SET name = ? WHERE id = ?");
+  const result = sql.run(name, id);
+  if (result.changes === 0) return null;
+  return { id: Number(id), name };
 }
 
 function DeleteUser(id) {
-  const index = users.findIndex(u => u.id === Number(id));
-  if (index === -1) return null;
-  return users.splice(index, 1);
+  const sql = db.prepare("DELETE FROM users WHERE id = ?");
+  const result = sql.run(id);
+  return result.changes > 0;
 }
 
 export default {
-  newUser,
+  NewUser,
+  GetUser,
   GetAllUsers,
   UpdateUser,
   DeleteUser,

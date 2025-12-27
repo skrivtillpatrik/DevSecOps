@@ -5,6 +5,7 @@ const router = express.Router();
 // CREATE
 router.post('/users', (req, res) => {
   const user = controller.newUser(req.body);
+  if (!user) return res.status(400).send('Invalid user data');
   res.status(201).json(user);
 }); 
 
@@ -13,12 +14,11 @@ router.get('/users', (req, res) => {
   console.log('Fetching all users');
   console.log(controller.GetAllUsers());
   res.json(controller.GetAllUsers());
-  res.json({users: [{id: 1, name: "John Doe"}, {id: 2, name: "Jane Smith"}]});
   res.status(200);
 });
 // READ ONE
 router.get('/users/:id', (req, res) => {
-  const user = controller.GetAllUsers(req.params.id);
+  const user = controller.GetUser(req.params.id);
   user ? res.json(user) : res.status(404).send('User not found');
 }); 
 // UPDATE   

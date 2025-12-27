@@ -1,51 +1,33 @@
-import { useEffect, useState } from "react";
-import { getUsers, createUser, updateUser, deleteUser } from "./api";
-import UserForm from "./UserForm";
-import UserList from "./UserList";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { UserProvider, useUser } from "./context/UserContext";
+
+import Layout from "./components/Layout";
+import UserSelectPage from "./pages/UserSelectPage";
+import MainAppPage from "./pages/MainAppPage";
+
+function ProtectedRoute({ children }) {
+  const { activeUser } = useUser();
+  return activeUser ? children : <Navigate to="/" />;
+}
 
 export default function App() {
-  const [users, setUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null);
-
-  async function load() {
-    const data = await getUsers();
-    setUsers(data.users || data); // beroende på ditt API-format
-  }
-
-  useEffect(() => {
-    load();
-  }, []);
-
-  async function handleCreate(data) {
-    await createUser(data);
-    load();
-  }
-
-  async function handleUpdate(data) {
-    await updateUser(editingUser.id, data);
-    setEditingUser(null);
-    load();
-  }
-
-  async function handleDelete(id) {
-    await deleteUser(id);
-    load();
-  }
-
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Användare</h1>
-
-      <UserForm
-        onSubmit={editingUser ? handleUpdate : handleCreate}
-        existingUser={editingUser}
-      />
-
-      <UserList
-        users={users}
-        onEdit={(u) => setEditingUser(u)}
-        onDelete={handleDelete}
-      />
-    </div>
+    <UserProvider>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<UserSelectPage />} />
+            <Route
+              path="/app"
+              element={
+                <ProtectedRoute>
+                  <MainAppPage />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </UserProvider>
   );
 }
