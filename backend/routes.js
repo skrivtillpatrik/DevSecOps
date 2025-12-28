@@ -4,7 +4,7 @@ const router = express.Router();
 
 // CREATE
 router.post('/users', (req, res) => {
-  const user = controller.newUser(req.body);
+  const user = controller.NewUser(req.body);
   if (!user) return res.status(400).send('Invalid user data');
   res.status(201).json(user);
 }); 

@@ -1,10 +1,14 @@
-let users = [];
-let nextId = 1;
+
+// placeholder för riktig databas
+// let users = [];
+// let nextId = 1;
+
+import db from './db.js';
 
 function NewUser(body) {
 
   
-  const { name } = req.body;
+  const { name } = body;
   const sql = db.prepare("INSERT INTO users (name) VALUES (?)");
   const result = sql.run(name);
 
