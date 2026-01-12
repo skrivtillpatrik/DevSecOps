@@ -46,10 +46,17 @@ function DeleteUser(id) {
   return result.changes > 0;
 }
 
+function VerifyPassword(user, password) {
+  // Placeholder for password verification logic
+  return true;//user.password === password;
+}
+
+
 export default {
   NewUser,
   GetUser,
   GetAllUsers,
   UpdateUser,
   DeleteUser,
+  VerifyPassword
 };

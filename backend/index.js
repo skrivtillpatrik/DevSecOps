@@ -1,15 +1,15 @@
 import express from 'express';
-import usersRouter from './routes.js'; // adjust path if needed
+import router from './routes/routes.js'; // adjust path if needed
+import { setupSession } from './session.js';
+
+
+
 
 const app = express();
+setupSession(app);
 
 app.use(express.json());
-app.use('/api', usersRouter);
-
-// serve static files from public (serves public/index.html at GET /)
-app.use(express.static('public'));
-
-
+app.use('/api', router);
 
 
 // Only start the server when not running tests
