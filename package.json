@@ -6,8 +6,8 @@
     "test": " cross-env NODE_ENV=unit vitest --run",
     "test:watch": "cross-env NODE_ENV=unit vitest",
     "reset:testdb": "node tests/resetTestDb.js",
-    "backend:e2e": "cross-env NODE_ENV=e2etest npm --prefix backend start",
-    "e2e": "npm run reset:testdb && concurrently -k -s first \"npm run backend:e2e\" \"wait-on http://localhost:3000/api/status && npx newman run tests/api/collection.json -e tests/api/environment.local.json\""
+    "backend:api": "cross-env NODE_ENV=e2etest npm --prefix backend start",
+    "testapi": "npm run reset:testdb && concurrently -k -s first \"npm run backend:api\" \"wait-on http://localhost:3000/api/status && npx newman run tests/api/collection.json -e tests/api/environment.local.json\""
   },
   "devDependencies": {
     "concurrently": "^8.0.0",

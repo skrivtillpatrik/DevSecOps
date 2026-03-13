@@ -55,7 +55,17 @@ router.put('/calendarEvents/:id', (req, res) => {
 
     const event = calendarController.updateCalendarEvent(req.params.id, eventInput, req.session.userId);
     if (!event) return res.status(404).send('Event not found');
-    res.json(event);
+    res.status(200).json(event);
+});
+
+router.delete('/calendarEvents/:id', (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).send('Not authenticated');
+    }
+
+    const event = calendarController.deleteCalendarEvent(req.params.id, req.session.userId);
+    if (!event) return res.status(404).send('Event not found');
+    res.status(200).json(event);
 });
 
 export default router;

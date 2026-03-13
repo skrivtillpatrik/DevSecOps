@@ -1,16 +1,14 @@
 {
   "info": {
+    "_postman_id": "926653b8-421e-4fdb-a288-2c1961fb50c2",
     "name": "Cowork API Tests",
-    "_postman_id": "cowork-tests",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "18685631",
+    "_collection_link": "https://go.postman.co/collection/18685631-926653b8-421e-4fdb-a288-2c1961fb50c2?source=collection_link"
   },
   "item": [
     {
       "name": "GET all users",
-      "request": {
-        "method": "GET",
-        "url": "{{baseUrl}}/users"
-      },
       "event": [
         {
           "listen": "test",
@@ -19,24 +17,28 @@
               "pm.test(\"Status code is 200\", function () {",
               "    pm.response.to.have.status(200);",
               "});"
-            ]
+            ],
+            "type": "text/javascript"
           }
         }
-      ]
-    },
-     {
-      "name": "Create user",
+      ],
       "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"name\": \"Test User\"}"
-        },
-        "url": "{{baseUrl}}/users"
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
       },
+      "response": []
+    },
+    {
+      "name": "Create user",
       "event": [
         {
           "listen": "test",
@@ -46,32 +48,49 @@
               "    pm.response.to.have.status(201);",
               "});",
               "",
+              "var json = pm.response.json();",
+              "",
               "pm.test(\"Response contains id\", function () {",
-              "    var json = pm.response.json();",
               "    pm.expect(json.id).to.exist;",
+              "});",
+              "",
+              "pm.test(\"Save created username\", function () {",
+              "    pm.expect(json.name).to.exist;",
+              "    pm.environment.set(\"createdUsername\", json.name);",
               "});"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
-      ]
-    },
-    {
-      "name": "Login User",
+      ],
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Content-Type", "value": "application/json" }
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+          "raw": "{\"name\": \"Test User3\"}"
         },
         "url": {
-          "raw": "{{baseUrl}}/api/auth/login",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "auth", "login"]
+          "raw": "{{baseUrl}}/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
         }
       },
+      "response": []
+    },
+    {
+      "name": "Login User",
       "event": [
         {
           "listen": "test",
@@ -84,29 +103,40 @@
               "pm.test(\"Login succeeded\", function () {",
               "    pm.expect(pm.response.code).to.eql(200);",
               "});"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
-      ]
-    },
-    {
-      "name": "Create Calendar Event",
+      ],
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Cookie", "value": "{{sessionCookie}}" }
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Testmöte\",\n  \"description\": \"API-test\",\n  \"dateStart\": \"2026-03-10T10:00:00\",\n  \"dateEnd\": \"2026-03-10T11:00:00\"\n}"
+          "raw": "{\n  \"username\": \"{{createdUsername}}\",\n  \"password\": \"password123\"\n}"
         },
         "url": {
-          "raw": "{{baseUrl}}/api/calendar",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "calendar"]
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
         }
       },
+      "response": []
+    },
+    {
+      "name": "Create Calendar Event",
       "event": [
         {
           "listen": "test",
@@ -117,31 +147,43 @@
               "pm.environment.set(\"eventId\", json.id);",
               "",
               "pm.test(\"Event created\", function () {",
-              "    pm.expect(pm.response.code).to.eql(200);",
+              "    pm.expect(pm.response.code).to.eql(201);",
               "});"
-            ]
+            ],
+            "type": "text/javascript"
           }
         }
-      ]
-    },
-    {
-      "name": "Update Calendar Event",
+      ],
       "request": {
-        "method": "PUT",
+        "method": "POST",
         "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Cookie", "value": "{{sessionCookie}}" }
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Cookie",
+            "value": "{{sessionCookie}}"
+          }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Uppdaterat möte\",\n  \"description\": \"API-test uppdaterad\",\n  \"dateStart\": \"2026-03-10T10:30:00\",\n  \"dateEnd\": \"2026-03-10T11:30:00\"\n}"
+          "raw": "{\n  \"title\": \"Testmöte\",\n  \"description\": \"API-test\",\n  \"dateStart\": \"2026-03-10T10:00:00\",\n  \"dateEnd\": \"2026-03-10T11:00:00\"\n}"
         },
         "url": {
-          "raw": "{{baseUrl}}/api/calendar/{{eventId}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "calendar", "{{eventId}}"]
+          "raw": "{{baseUrl}}/calendarEvents",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "calendarEvents"
+          ]
         }
       },
+      "response": []
+    },
+    {
+      "name": "Update Calendar Event",
       "event": [
         {
           "listen": "test",
@@ -150,24 +192,42 @@
               "pm.test(\"Event updated\", function () {",
               "    pm.expect(pm.response.code).to.eql(200);",
               "});"
-            ]
+            ],
+            "type": "text/javascript"
           }
         }
-      ]
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Cookie",
+            "value": "{{sessionCookie}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Uppdaterat möte\",\n  \"description\": \"API-test uppdaterad\",\n  \"dateStart\": \"2026-03-10T10:30:00\",\n  \"dateEnd\": \"2026-03-10T11:30:00\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/calendarEvents/{{eventId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "calendarEvents",
+            "{{eventId}}"
+          ]
+        }
+      },
+      "response": []
     },
     {
       "name": "Delete Calendar Event",
-      "request": {
-        "method": "DELETE",
-        "header": [
-          { "key": "Cookie", "value": "{{sessionCookie}}" }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/api/calendar/{{eventId}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "calendar", "{{eventId}}"]
-        }
-      },
       "event": [
         {
           "listen": "test",
@@ -176,13 +236,63 @@
               "pm.test(\"Event deleted\", function () {",
               "    pm.expect(pm.response.code).to.eql(200);",
               "});"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
-      ]
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Cookie",
+            "value": "{{sessionCookie}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/calendarEvents/{{eventId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "calendarEvents",
+            "{{eventId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
     }
   ],
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:3000" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    }
   ]
 }

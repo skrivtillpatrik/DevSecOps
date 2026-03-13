@@ -88,6 +88,8 @@ function updateCalendarEvent(id, body, userId) {
         SET title = ?, description = ?, dateStart = ?, dateEnd = ?
         WHERE id = ? AND createdBy = ?
     `);
+
+    console.log('Uppdaterar calendar event:', id);
     const result = sql.run(event.title, event.description, event.dateStart, event.dateEnd, id, userId);
     if (result.changes === 0) return null;
     return new CalendarEvent({ id: id, title: event.title, dateStart: event.dateStart, dateEnd: event.dateEnd, description: event.description, createdBy: userId, participants: GetEventMembers(id), participantsNames: GetEventMembersNames(id) });
@@ -95,6 +97,7 @@ function updateCalendarEvent(id, body, userId) {
 function deleteCalendarEvent(id, userId) {
     const db = getDbOrThrow();
     const eventsql = db.prepare("SELECT * FROM calendarMeeting WHERE id = ? AND createdBy = ?");
+    console.log('Tar bort calendar event:', id);
     const event = eventsql.get(id, userId);
     if (!event) return null;
     const sql = db.prepare("DELETE FROM calendarMeeting WHERE id = ? AND createdBy = ?");
