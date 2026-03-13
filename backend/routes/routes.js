@@ -1,8 +1,15 @@
 import express from 'express';
 import controller from '../userController.js';
-import calendarController from '../calendarController.js';
 
 const router = express.Router();
+
+// Public status endpoint for liveness checks
+router.get('/status', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // CREATE User
 router.post('/users', (req, res) => {
@@ -37,16 +44,6 @@ router.delete('/users/:id', (req, res) => {
     res.json(deleted[0]);
 });
 
-// Calendar Event Routes
-router.post('/calendarEvents', (req, res) => {
-    const event = calendarController.createCalendarEvent(req.body);
-    res.status(201).json(event);
-});
 
-router.get('/calendarEvents/:id/', (req, res) => {
-    const event = calendarController.getCalendarEvent(req.params.id, req.params.userId);
-    event ? res.json(event) : res.status(404).send('Event not found');
-});
-cd
 
 export default router;

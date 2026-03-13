@@ -2,9 +2,19 @@
   "name": "secureapp",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm --prefix backend start\" \"npm --prefix frontend start\""
+    "dev": "concurrently \"npm --prefix backend start\" \"npm --prefix frontend start\"",
+    "test": " cross-env NODE_ENV=unit vitest --run",
+    "test:watch": "cross-env NODE_ENV=unit vitest",
+    "reset:testdb": "node tests/resetTestDb.js",
+    "backend:e2e": "cross-env NODE_ENV=e2etest npm --prefix backend start",
+    "e2e": "npm run reset:testdb && concurrently -k -s first \"npm run backend:e2e\" \"wait-on http://localhost:3000/api/status && npx newman run tests/api/collection.json -e tests/api/environment.local.json\""
   },
   "devDependencies": {
-    "concurrently": "^8.0.0"
+    "concurrently": "^8.0.0",
+    "cross-env": "^10.1.0",
+    "wait-on": "^9.0.4"
+  },
+  "dependencies": {
+    "vitest": "^4.0.18"
   }
 }

@@ -1,13 +1,18 @@
-import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../api";
+import { useUser } from "../context/UserContext";
 
 export default function Layout({ children }) {
-  const { activeUser, logout } = useUser();
+  const { user, clearUser } = useUser();
   const navigate = useNavigate();
 
-  function handleLogout() {
-    logout();
-    navigate("/");
+  async function handleLogout() {
+    try {
+      await logout();
+    } finally {
+      clearUser();
+      navigate("/", { replace: true });
+    }
   }
 
   return (
@@ -21,9 +26,9 @@ export default function Layout({ children }) {
       }}>
         <div>Cowork</div>
 
-        {activeUser && (
+        {user && (
           <div>
-            Inloggad som: <strong>{activeUser.name}</strong>
+            Inloggad som: <strong>{user.name}</strong>
             <button style={{ marginLeft: 10 }} onClick={handleLogout}>
               Logga ut
             </button>

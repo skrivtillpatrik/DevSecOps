@@ -1,15 +1,20 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider, useUser } from "./context/UserContext";
-
 import Layout from "./components/Layout";
 import UserSelectPage from "./pages/UserSelectPage";
 import MainAppPage from "./pages/MainAppPage";
 import CalendarPage from "./pages/CalendarPage";
 import NotesPage from "./pages/NotesPage";
 import UserAdminPage from "./pages/UserAdminPage";
+
 function ProtectedRoute({ children }) {
-  const { activeUser } = useUser();
-  return activeUser ? children : <Navigate to="/" />;
+  const { user, loading } = useUser();
+
+  if (loading) {
+    return <div style={{ padding: 20 }}>Checking session...</div>;
+  }
+
+  return user ? children : <Navigate to="/" replace />;
 }
 
 export default function App() {

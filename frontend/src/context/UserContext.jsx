@@ -1,21 +1,52 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { getCurrentUser } from "../api";
 
-const UserContext = createContext(null);
+export const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
-  const [activeUser, setActiveUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  function logout() {
-    setActiveUser(null);
+  async function refreshUser() {
+    try {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+      return currentUser;
+    } catch (error) {
+      if (error?.status === 401) {
+        setUser(null);
+        return null;
+      }
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   }
 
+  function clearUser() {
+    setUser(null);
+  }
+
+  useEffect(() => {
+    refreshUser().catch(() => {
+        setUser(null);
+        setLoading(false);
+    });
+  }, []);
+
+  const value = { user, setUser, loading, refreshUser, clearUser };
+
   return (
-    <UserContext.Provider value={{ activeUser, setActiveUser, logout }}>
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );
 }
 
 export function useUser() {
-  return useContext(UserContext);
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+  return context;
 }

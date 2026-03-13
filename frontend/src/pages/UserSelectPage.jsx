@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { getUsers, createUser } from "../api";
-import { useUser } from "../context/UserContext";
+import { getUsers, createUser, login } from "../api";
 import { useNavigate } from "react-router-dom";
 import UserForm from "../components/users/UserForm";
+import { useUser } from "../context/UserContext";
 
 export default function UserSelectPage() {
   const [users, setUsers] = useState([]);
-  const { setActiveUser } = useUser();
+  const [authError, setAuthError] = useState("");
+  const { refreshUser } = useUser();
   const navigate = useNavigate();
 
   async function loadUsers() {
@@ -18,20 +19,33 @@ export default function UserSelectPage() {
     loadUsers();
   }, []);
 
-  function handleSelect(e) {
+  async function handleSelect(e) {
+    setAuthError("");
+
     const id = e.target.value;
     if (!id) return;
 
     const user = users.find(u => u.id === Number(id));
-    setActiveUser(user);
-    navigate("/app");
+    if (!user) return;
+
+    try {
+      await login(user.name, "defaultPassword");
+      const currentUser = await refreshUser();
+
+      if (!currentUser) {
+        throw new Error("Session was not established.");
+      }
+
+      navigate("/app", { replace: true });
+    } catch (error) {
+      setAuthError(error?.message || "Could not log in.");
+    }
   }
 
+
   async function handleCreateUser(data) {
-    const newUser = await createUser(data);
+    await createUser(data);
     await loadUsers();
-    setActiveUser(newUser);
-    navigate("/app");
   }
 
   return (
@@ -44,6 +58,10 @@ export default function UserSelectPage() {
           <option key={u.id} value={u.id}>{u.name}</option>
         ))}
       </select>
+
+      {authError && (
+        <p style={{ color: "crimson", marginTop: 12 }}>{authError}</p>
+      )}
 
       <hr style={{ margin: "20px 0" }} />
 
