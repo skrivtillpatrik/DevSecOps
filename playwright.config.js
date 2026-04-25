@@ -75,7 +75,13 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: [
     {
-      command: 'npm run reset:testdb && npm run backend:api',
+      command: 'npm run reset:testdb',
+      stdout: 'pipe',
+      stderr: 'pipe',
+      timeout: 60 * 1000
+    },
+    {
+      command: 'npm run backend:api',
       url: 'http://localhost:3000/api/status',
       reuseExistingServer: false,
       timeout: 120 * 1000,
