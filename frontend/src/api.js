@@ -105,3 +105,19 @@ export async function createCalendarEvent(data) {
     credentials: "include"
   });
 }
+
+export async function updateCalendarEvent(id, data) {
+  return requestJson(`${API_CalendarEvents}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+    credentials: "include"
+  });
+}
+
+export async function deleteCalendarEvent(id) {
+  return requestJson(`${API_CalendarEvents}/${id}`, {
+    method: "DELETE",
+    credentials: "include"
+  });
+}

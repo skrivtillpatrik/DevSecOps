@@ -46,7 +46,7 @@ useEffect(() => {
       )}
 
       <div>
-        <CalendarAgenda events={events} currentUserId={user?.id} />
+        <CalendarAgenda events={events} currentUserId={user?.id} onRefresh={loadEvents} />
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ export default function MainAppPage() {
       <div style={{ display: "flex", gap: 20 }}>
         {modules.map(m => (
           <Link
+            name={`${m.name}Link`}
             key={m.path}
             to={m.path}
             style={{
