@@ -79,6 +79,8 @@ export default defineConfig({
       url: 'http://localhost:3000/api/status',
       reuseExistingServer: false,
       timeout: 120 * 1000,
+      stdout: 'pipe',
+      stderr: 'pipe'
     },
     {
       command: 'cross-env BROWSER=none npm --prefix frontend start',
