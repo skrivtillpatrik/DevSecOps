@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUsers, createCalendarEvent } from "../api.js";
 
-export default function CreateCalendarEvent() {
+export default function CreateCalendarEvent({ onCreated }) {
   const [users, setUsers] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -45,6 +45,7 @@ export default function CreateCalendarEvent() {
       setDateStart("");
       setDateEnd("");
       setSelectedUsers([]);
+      onCreated?.();
     } catch (err) {
       console.error(err);
       setStatus("Kunde inte skapa event");
@@ -59,6 +60,7 @@ export default function CreateCalendarEvent() {
         <div>
           <label>Titel</label><br />
           <input
+            name="title"
             type="text"
             value={title}
             onChange={e => setTitle(e.target.value)}
@@ -69,6 +71,7 @@ export default function CreateCalendarEvent() {
         <div>
           <label>Starttid</label><br />
           <input
+            name="datestart"
             type="datetime-local"
             value={dateStart}
             onChange={e => setDateStart(e.target.value)}
@@ -79,6 +82,7 @@ export default function CreateCalendarEvent() {
         <div>
           <label>Sluttid</label><br />
           <input
+            name="dateend"
             type="datetime-local"
             value={dateEnd}
             onChange={e => setDateEnd(e.target.value)}
@@ -89,6 +93,7 @@ export default function CreateCalendarEvent() {
         <div>
           <label>Beskrivning</label><br />
           <textarea
+            name="description"
             value={description}
             onChange={e => setDescription(e.target.value)}
           />

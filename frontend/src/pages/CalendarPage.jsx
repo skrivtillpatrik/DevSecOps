@@ -30,7 +30,7 @@ useEffect(() => {
     <div>
       <h1>Din kalender</h1>
 
-      <button onClick={() => setShowForm(prev => !prev)}>
+      <button name="CreateEvent" onClick={() => setShowForm(prev => !prev)}>
         {showForm ? "Stäng formulär" : "Skapa nytt event"}
       </button>
 

@@ -59,3 +59,10 @@ Thumbs.db
 # Yarn/PNPM PnP
 .pnp/
 .pnp.js
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

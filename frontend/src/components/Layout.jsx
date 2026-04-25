@@ -26,14 +26,19 @@ export default function Layout({ children }) {
       }}>
         <div>Cowork</div>
 
-        {user && (
+        {user ? (
           <div>
             Inloggad som: <strong>{user.name}</strong>
             <button style={{ marginLeft: 10 }} onClick={handleLogout}>
               Logga ut
             </button>
           </div>
-        )}
+        ) :
+          (
+            <button name="loginbutton" onClick={() => navigate("/login", { replace: true })}>
+              Logga in
+            </button>
+          )}
       </header>
 
       <main>{children}</main>

@@ -17,6 +17,8 @@ export default function UserForm({ onSubmit, existingUser }) {
     <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
       <input
         placeholder="Namn 123"
+        id="createUserName"
+        name="createUserName"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />

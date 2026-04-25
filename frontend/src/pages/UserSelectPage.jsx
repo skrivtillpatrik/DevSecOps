@@ -52,7 +52,7 @@ export default function UserSelectPage() {
     <div style={{ padding: 20 }}>
       <h1>Välj användare</h1>
 
-      <select onChange={handleSelect} defaultValue="">
+      <select name="userSelect" onChange={handleSelect} defaultValue="">
         <option value="">-- välj användare --</option>
         {users.map(u => (
           <option key={u.id} value={u.id}>{u.name}</option>
@@ -66,7 +66,7 @@ export default function UserSelectPage() {
       <hr style={{ margin: "20px 0" }} />
 
       <h2>Skapa ny användare</h2>
-      <UserForm onSubmit={handleCreateUser} />
+      <UserForm  onSubmit={handleCreateUser} />
     </div>
   );
 }

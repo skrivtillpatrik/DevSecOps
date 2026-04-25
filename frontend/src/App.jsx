@@ -6,6 +6,7 @@ import MainAppPage from "./pages/MainAppPage";
 import CalendarPage from "./pages/CalendarPage";
 import NotesPage from "./pages/NotesPage";
 import UserAdminPage from "./pages/UserAdminPage";
+import LoginPage from "./pages/LoginPage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useUser();
@@ -56,6 +57,12 @@ export default function App() {
                 <ProtectedRoute>
                   <UserAdminPage />
                 </ProtectedRoute>
+              }
+            />
+
+            <Route path="/login"
+              element={
+                <LoginPage />
               }
             />
           </Routes>
