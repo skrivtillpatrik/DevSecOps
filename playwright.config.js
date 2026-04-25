@@ -81,7 +81,7 @@ export default defineConfig({
       timeout: 60 * 1000
     },
     {
-      command: 'npm run backend:api',
+      command: 'node backend/index.js',
       url: 'http://localhost:3000/api/status',
       reuseExistingServer: false,
       timeout: 120 * 1000,
