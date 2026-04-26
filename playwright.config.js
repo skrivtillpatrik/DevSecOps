@@ -81,7 +81,7 @@ export default defineConfig({
       timeout: 60 * 1000
     },
     {
-      command: 'node backend/index.js',
+      command: 'cross-env NODE_ENV=e2etest node backend/index.js',
       url: 'http://localhost:3000/api/status',
       reuseExistingServer: false,
       timeout: 120 * 1000,
