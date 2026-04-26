@@ -18,6 +18,12 @@ export default defineConfig({
   fullyParallel: false,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  /* Global timeout for each test */
+  timeout: process.env.CI ? 60000 : 30000,
+  /* Expect timeout */
+  expect: {
+    timeout: process.env.CI ? 10000 : 5000,
+  },
   globalSetup: './tests/e2e/playwright.global-setup.js',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -76,13 +82,14 @@ export default defineConfig({
     },
     {
       command: 'node backend/index.js',
-      url: 'http://localhost:3000/api/users',
+      url: 'http://localhost:3000/api/status',
       reuseExistingServer: false,
       timeout: 120 * 1000,
       stdout: 'pipe',
       stderr: 'pipe',
       env: {
-        NODE_ENV: 'e2etest'
+        NODE_ENV: 'e2etest',
+        DEBUG: process.env.CI ? 'true' : undefined
       }
     },
     {
@@ -94,7 +101,9 @@ export default defineConfig({
       stderr: 'pipe',
       env: {
         PORT: '3001',
-        BROWSER: 'none'
+        BROWSER: 'none',
+        CI: 'true',
+        DEBUG: process.env.CI ? 'true' : undefined
       }
     },
   ],

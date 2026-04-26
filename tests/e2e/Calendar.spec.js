@@ -2,36 +2,69 @@ import { test, expect } from '@playwright/test';
 
 // Helper function to ensure user is logged in
 async function ensureLoggedIn(page) {
-  await page.goto('http://localhost:3001');
+  // Increase default timeout for CI environments
+  const timeout = process.env.CI ? 30000 : 10000;
 
-  // Check if already logged in by looking for app content
-  if (page.url().includes('/app')) {
-    return; // Already logged in
+  // Small delay to let servers stabilize
+  if (process.env.CI) {
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  // Wait for user select to be available
-  await page.waitForSelector('select[name="userSelect"]');
+  try {
+    console.log('Starting ensureLoggedIn...');
+    // Wait for frontend to be available
+    await page.goto('http://localhost:3001', { timeout, waitUntil: 'domcontentloaded' });
+    console.log('Frontend page loaded, URL:', page.url());
 
-  // Check if test user exists
-  const userOption = page.locator('select[name="userSelect"] option').filter({ hasText: 'e2etestUser' });
-  if (await userOption.count() === 0) {
-    // Create user if not exists
-    await page.fill('input[name="createUserName"]', 'e2etestUser');
+    // Check if already logged in by looking for app content
+    if (page.url().includes('/app')) {
+      console.log('Already logged in, skipping login process');
+      return; // Already logged in
+    }
+
+    console.log('Not logged in, proceeding with login...');
+    // Wait for user select to be available with longer timeout
+    await page.waitForSelector('select[name="userSelect"]', { timeout });
+    console.log('User select found');
+
+    // Check if test user exists
+    const userOption = page.locator('select[name="userSelect"] option').filter({ hasText: 'e2etestUser' });
+    const userCount = await userOption.count();
+    console.log('Test user count:', userCount);
+
+    if (userCount === 0) {
+      console.log('Creating test user...');
+      // Create user if not exists
+      await page.fill('input[name="createUserName"]', 'e2etestUser');
+      await page.click('button[type="submit"]');
+
+      // Wait for user to appear in select with longer timeout
+      await page.waitForSelector('select[name="userSelect"] option:has-text("e2etestUser")', { timeout });
+      console.log('Test user created');
+    }
+
+    console.log('Clicking login button...');
+    // Click login
+    await page.getByRole("button", { name: "Logga in" }).click();
+
+    // Wait for login page with longer timeout
+    await page.waitForURL('http://localhost:3001/login', { timeout });
+    console.log('Login page loaded');
+
+    // Fill credentials
+    await page.fill('input[placeholder="Användarnamn"]', 'e2etestUser');
+    await page.fill('input[placeholder="Lösenord"]', 'defaultPassword');
     await page.click('button[type="submit"]');
-    await expect(page.locator('select[name="userSelect"] option').filter({ hasText: 'e2etestUser' })).toHaveCount(1);
+    console.log('Login form submitted');
+
+    // Wait for successful login with longer timeout
+    await page.waitForURL('http://localhost:3001/app', { timeout });
+    console.log('Login successful');
+
+  } catch (error) {
+    console.error('ensureLoggedIn failed:', error);
+    throw new Error(`Login process failed: ${error.message}`);
   }
-
-  // Click login
-  await page.getByRole("button", { name: "Logga in" }).click();
-  await expect(page).toHaveURL('http://localhost:3001/login');
-
-  // Fill credentials
-  await page.fill('input[placeholder="Användarnamn"]', 'e2etestUser');
-  await page.fill('input[placeholder="Lösenord"]', 'defaultPassword');
-  await page.click('button[type="submit"]');
-
-  // Wait for login success
-  await page.waitForURL('http://localhost:3001/app');
 }
 
 test.describe('Calendar', () => {
