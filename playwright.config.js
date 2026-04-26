@@ -81,19 +81,21 @@ export default defineConfig({
       timeout: 60 * 1000
     },
     {
-      command: 'cross-env NODE_ENV=e2etest node backend/index.js',
-      url: 'http://localhost:3000/api/status',
-      reuseExistingServer: false,
-      timeout: 120 * 1000,
-      stdout: 'pipe',
-      stderr: 'pipe'
-    },
-    {
-      command: 'cross-env BROWSER=none npm --prefix frontend start',
+      command: 'cross-env BROWSER=none npm frontend start',
       url: 'http://localhost:3001',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
     },
+    {
+      command: 'npm run backend:api',
+      reuseExistingServer: false,
+      timeout: 120 * 1000,
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: {
+        NODE_ENV: 'e2etest'
+      }
+    }
   ],
 });
 
