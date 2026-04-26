@@ -81,7 +81,7 @@ export default defineConfig({
       timeout: 60 * 1000
     },
     {
-      command: 'cross-env BROWSER=none npm frontend start',
+      command: 'cross-env BROWSER=none --prefix npm frontend start',
       url: 'http://localhost:3001',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
