@@ -92,10 +92,16 @@ export default defineConfig({
       }
     },
     {
-      command: 'cross-env BROWSER=none npm --prefix frontend start',
+      command: 'npm --prefix frontend start',
       url: 'http://localhost:3001',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: {
+        PORT: '3001',
+        BROWSER: 'none'
+      }
     },
   ],
 });
