@@ -51,6 +51,10 @@ Thumbs.db
 *.pem
 *.key
 
+# SQLite database files
+*.sqlite
+backend/data/*.sqlite
+
 # Serverless / deployment
 .serverless/
 .vercel/

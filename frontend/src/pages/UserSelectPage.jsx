@@ -12,7 +12,17 @@ export default function UserSelectPage() {
 
   async function loadUsers() {
     const data = await getUsers();
-    setUsers(data.users || data);
+    const normalizedUsers = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.users)
+      ? data.users
+      : [];
+
+    if (!Array.isArray(normalizedUsers)) {
+      console.error('Unexpected getUsers response:', data);
+    }
+
+    setUsers(normalizedUsers);
   }
 
   useEffect(() => {
@@ -54,9 +64,11 @@ export default function UserSelectPage() {
 
       <select name="userSelect" onChange={handleSelect} defaultValue="">
         <option value="">-- välj användare --</option>
-        {users.map(u => (
-          <option key={u.id} value={u.id}>{u.name}</option>
-        ))}
+        {Array.isArray(users)
+          ? users.map(u => (
+              <option key={u.id} value={u.id}>{u.name}</option>
+            ))
+          : null}
       </select>
 
       {authError && (

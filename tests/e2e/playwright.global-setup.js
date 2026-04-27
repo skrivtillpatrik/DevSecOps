@@ -5,14 +5,14 @@ export default async function globalSetup(config) {
     baseURL: 'http://localhost:3000'
   });
 
-  // Skapa testanvändare via API eller direkt i databasen
+  // Create test user for all tests
   await api.post('/api/users', {
     data: {
       name: 'e2etestUser',
       password: 'defaultPassword'
     }
   });
-  console.log("Testanvändare skapad");
+  console.log("Test user created: e2etestUser");
 
   await api.dispose();
 }
